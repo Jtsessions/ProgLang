@@ -1,11 +1,15 @@
-class Main
+require './lexeme'
+require './lexer'
+
+class Main # Controls each of the individual language components
   
   def initialize
-    dog = gets
-    endfileName = gets("Please supply an absolute file path for your source code.") #Interpreter doesnt seem to like gets
-    p "kbesgkjbesgljbdsfkjfsabljbfsa"
+    
+    puts "In the main; script running!"
+    @lexer = Lexer.new("Insert absolute path here")
+    
   end
   
 end
 
-m = Main.new
+Main.new
