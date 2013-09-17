@@ -3,7 +3,7 @@ require 'strscan'
 class Lexer # Class that creates lexemes for each symbol encountered
   
   def initialize( filePath )
-    @text = "   define define define cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" }" # This is a placeholder. Grab the file instead!
+    @text = "   define define define cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + '  cakeeeee' + \"Cake\" }" # This is a placeholder. Grab the file instead!
     @scanner = StringScanner.new( @text )
     lex
   end
@@ -12,8 +12,8 @@ class Lexer # Class that creates lexemes for each symbol encountered
     
     results = [] # Create an array to store the resulting chain of lexemes for return
     
-    nextToken = @scanner.scan(/\s*(\w+|[(){}+\-*\/"'\@])/) # Match optional whitespace, then a word or parenthesis/bracket
-    p nextToken.strip
+    nextToken = @scanner.scan(/\s*\S+/) # Match optional whitespace, then a word or parenthesis/bracket
+    p nextToken
     until nextToken == nil
     
       type = nil # Initialize type and value fields so that we can factor out the lexeme constructor statement
@@ -73,7 +73,7 @@ class Lexer # Class that creates lexemes for each symbol encountered
       
       results.push( Lexeme.new( type, value ))
     
-      nextToken = @scanner.scan(/\s+(\w+|[(){}+\-*\/"'])/) # Match whitespace, then a word or parenthesis/bracket
+      nextToken = @scanner.scan(/\s+\S+/) # Match whitespace, then a word or parenthesis/bracket
       
       p nextToken
     end
