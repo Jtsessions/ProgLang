@@ -3,7 +3,7 @@ require 'strscan'
 class Lexer # Class that creates lexemes for each symbol encountered
   
   def initialize( filePath )
-    @text = "   define define define cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + '  cakeeeee' + \"Cake\" }" # This is a placeholder. Grab the file instead!
+    @text = "   define define define cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + '  cakeeeee' + \"Cake \" }" # This is a placeholder. Grab the file instead!
     @scanner = StringScanner.new( @text )
     lex
   end
