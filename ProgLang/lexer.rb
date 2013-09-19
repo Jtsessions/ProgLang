@@ -8,7 +8,7 @@ class Lexer # Class that creates lexemes for each symbol encountered
     lex
   end
   
-  def lex
+  def lex # Create lexemes from tokens in the source code file
     
     results = [] # Create an array to store the resulting chain of lexemes for return
     
