@@ -3,17 +3,28 @@ require 'strscan'
 class Lexer # Class that creates lexemes for each symbol encountered
   
   def initialize( filePath )
-    @text = " ] [ house ] define 1define define1 cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" - 'Cake' + '    cake' + \"    cake\" }" # This is a placeholder. Grab the file instead!
+    @text = " ] [ house ] define 1define define1 cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" - 'Cake' + '    cake' + \"    cake\" + \"cake   \" + 'cake   ' }" # This is a placeholder. Grab the file instead!
     @scanner = StringScanner.new( @text )
     lex
   end
+
   
-  def lex # Create lexemes from tokens in the source code file
+  
+###################################################################################################################################
+# def lex
+#   purpose: 
+#     Lex parses a source code file for each token and pairs it with a type, then bundles it as a lexeme object.
+#     Lex then adds this to a collection of lexemes and returns them all at the end of the process.
+#   inputs:
+#     None.  
+#   outputs:
+#     results - an array of lexeme objects taken from the parsing of a file and assignment to a type
+###################################################################################################################################
+  def lex
     
     results = [] # Create an array to store the resulting chain of lexemes for return
     
     nextToken = @scanner.scan(/\s*\S+/) # Match optional whitespace, then a word or parenthesis/bracket
-    p nextToken
     until nextToken == nil
     
       type = nil # Initialize type and value fields so that we can factor out the lexeme constructor statement
@@ -82,7 +93,6 @@ class Lexer # Class that creates lexemes for each symbol encountered
     
       nextToken = @scanner.scan(/\s+\S+/) # Match whitespace, then a word or parenthesis/bracket
       
-      p nextToken
     end
 
     results.each { |x| print "#{x}\n" }
@@ -103,13 +113,11 @@ class Lexer # Class that creates lexemes for each symbol encountered
 #     value - the value of the string begun by token. This will become the value of the string lexeme eventually.
 ###################################################################################################################################
   def obtainStringValue( quotationType, token )
-    if (token.length > 1) and (token[-1] != quotationType) # If possible that the string might have leading spaces
-      nextToken = @scanner.scan(/.*#{quotationType}/)
-      value = nextToken[1...-1] # We don't wanna keep that last quotation mark
-      p value
-      return value
-    else # The string has no leading spaces that could confuse the lexer
-      return token[1...-1]
+    if (token.length > 1) and (token[-1] == quotationType) # If the string is a "simple string" with no leading/trailing whitespace
+      return token[1...-1]    
+    else # The string has leading/trailing whitespace and additional scanning must be done
+      nextToken = token + @scanner.scan(/.*?#{quotationType}/) # Here's the bug - If the first token that we get is something like "cake, then we end up throwing out anything stuck to the quotes.
+      return nextToken[1...-1]
     end
   end
   
