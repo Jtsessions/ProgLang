@@ -5,10 +5,7 @@ class Lexer # Class that creates lexemes for each symbol encountered
   def initialize( filePath )
     @text = " ] [ house ] define 1define define1 cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" - 'Cake' + '    cake' + \"    cake\" + \"cake   \" + 'cake   ' }" # This is a placeholder. Grab the file instead!
     @scanner = StringScanner.new( @text )
-    lex
-  end
-
-  
+  end  
   
 ###################################################################################################################################
 # def lex
@@ -25,78 +22,75 @@ class Lexer # Class that creates lexemes for each symbol encountered
     results = [] # Create an array to store the resulting chain of lexemes for return
     
     nextToken = @scanner.scan(/\s*\S+/) # Match optional whitespace, then a word or parenthesis/bracket
-    until nextToken == nil
-    
-      type = nil # Initialize type and value fields so that we can factor out the lexeme constructor statement
-      value = nil
-    
-      case nextToken.strip.downcase
-        when 'define'
-          type = :DEFINE
-        when '('
-          type = :OPAREN
-        when ')'
-          type = :CPAREN
-        when '{'
-          type = :OBRACE
-        when '}'
-          type = :CBRACE
-        when '['
-          type = :OBRACKET
-        when ']'
-          type = :CBRACKET
-        when '/'
-          type = :FSLASH
-        when '\\'
-          type = :BSLASH
-        when '+'
-          type = :PLUS
-        when '++'
-          type = :PLUSPLUS
-        when '-'
-          type = :MINUS
-        when '--'
-          type = :MINUSMINUS
-        when ';'
-          type = :SEMICOLON
-        when ':'
-          type = :COLON
-        when 'if'
-          type = :IF
-        when 'else'
-          type = :ELSE
-        else # If the token isn't "simple"
-          if nextToken.strip.match(/^\d+$/)
-            type = :INTEGER
-            value = nextToken.strip
-            
-          elsif nextToken.strip[0] == '"' # Instead, when you find an open quote, take the next token until
-            type = :DSTRING
-            value = obtainStringValue( '"', nextToken.strip )
-            
-          elsif nextToken.strip[0] == "'" # We find a close quote. If we don't, error!
-            type = :SSTRING
-            value = obtainStringValue( "'", nextToken.strip )
-            
-          elsif nextToken.strip.match(/^[a-zA-Z]\w*$/) # Match any identifier starting with a letter
-            type = :IDENTIFIER
-            value = nextToken.strip
-            
-          else
-            type = :INVALIDTOKEN
-            value = "!!!INVALID: |#{nextToken}|!!!"
-            
-          end
-      end
-      
-      results.push( Lexeme.new( type, value ))
-    
-      nextToken = @scanner.scan(/\s+\S+/) # Match whitespace, then a word or parenthesis/bracket
-      
-    end
 
-    results.each { |x| print "#{x}\n" }
+    type = nil # Initialize type and value fields so that we can factor out the lexeme constructor statement
+    value = nil
     
+    if nextToken == nil
+      return Lexeme.new( :ENDOFFILE, nil )
+    end
+  
+    case nextToken.strip.downcase
+      when 'define'
+        type = :DEFINE
+      when '('
+        type = :OPAREN
+      when ')'
+        type = :CPAREN
+      when '{'
+        type = :OBRACE
+      when '}'
+        type = :CBRACE
+      when '['
+        type = :OBRACKET
+      when ']'
+        type = :CBRACKET
+      when '/'
+        type = :FSLASH
+      when '\\'
+        type = :BSLASH
+      when '+'
+        type = :PLUS
+      when '++'
+        type = :PLUSPLUS
+      when '-'
+        type = :MINUS
+      when '--'
+        type = :MINUSMINUS
+      when ';'
+        type = :SEMICOLON
+      when ':'
+        type = :COLON
+      when 'if'
+        type = :IF
+      when 'else'
+        type = :ELSE
+      else # If the token isn't "simple"
+        if nextToken.strip.match(/^\d+$/)
+          type = :INTEGER
+          value = nextToken.strip
+          
+        elsif nextToken.strip[0] == '"' # Instead, when you find an open quote, take the next token until
+          type = :DSTRING
+          value = obtainStringValue( '"', nextToken.strip )
+          
+        elsif nextToken.strip[0] == "'" # We find a close quote. If we don't, error!
+          type = :SSTRING
+          value = obtainStringValue( "'", nextToken.strip )
+          
+        elsif nextToken.strip.match(/^[a-zA-Z]\w*$/) # Match any identifier starting with a letter
+          type = :IDENTIFIER
+          value = nextToken.strip
+          
+        else
+          type = :INVALIDTOKEN
+          value = "!!!INVALID: |#{nextToken}|!!!"
+          
+        end
+    end
+    
+    return Lexeme.new( type, value )
+ 
   end
   
   private

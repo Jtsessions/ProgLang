@@ -7,6 +7,7 @@ class Main # Controls each of the individual language components
     
     puts "In the main; script running!"
     @lexer = Lexer.new("Insert absolute path here")
+    @grammar = Grammar.new( @lexer )
     
   end
   

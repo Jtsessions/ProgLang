@@ -6,10 +6,11 @@ class Lexeme # Class that represents a lexed token
   def initialize(type, value)
     @type = type
     @value = value
+    p self.to_s
   end
   
   def to_s
-    return "Lexeme: #{@type} #{@value}"
+    return "Lexeme: <#{@type}> <#{@value}>"
   end
   
 end
