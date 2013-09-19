@@ -54,10 +54,6 @@ class Lexer # Class that creates lexemes for each symbol encountered
           if nextToken.strip.match(/^\d+$/)
             type = :INTEGER
             value = nextToken.strip
-          elsif nextToken.strip == '"' # Instead, when you find an open quote, take the next token until
-            type = :DSTRING
-            nextToken = @scanner.scan(/.*"/)
-            value = nextToken[0...-1] # We don't wanna keep that last quotation mark
           elsif nextToken.strip == "'" # We find a close quote. If we don't, error!
             type = :SSTRING
             nextToken = @scanner.scan(/.*'/)
