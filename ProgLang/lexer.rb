@@ -3,7 +3,7 @@ require 'strscan'
 class Lexer # Class that creates lexemes for each symbol encountered
   
   def initialize( filePath )
-    @text = " ] [ house ] define 1define define1 cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" }" # This is a placeholder. Grab the file instead!
+    @text = " ] [ house ] define 1define define1 cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" - 'Cake' + '    cake' + \"    cake\" }" # This is a placeholder. Grab the file instead!
     @scanner = StringScanner.new( @text )
     lex
   end
@@ -54,16 +54,18 @@ class Lexer # Class that creates lexemes for each symbol encountered
           type = :IF
         when 'else'
           type = :ELSE
-        else # For now, instead of "token not implemented", we'll say they're identifiers.
+        else # If the token isn't "simple"
           if nextToken.strip.match(/^\d+$/)
             type = :INTEGER
             value = nextToken.strip
-          elsif nextToken.strip == '"' # Instead, when you find an open quote, take the next token until
+          elsif nextToken.strip[0] == '"' # Instead, when you find an open quote, take the next token until
             type = :DSTRING
+            value = obtainStringValue( '"', nextToken )
             nextToken = @scanner.scan(/.*"/)
             value = nextToken[0...-1] # We don't wanna keep that last quotation mark
-          elsif nextToken.strip == "'" # We find a close quote. If we don't, error!
+          elsif nextToken.strip[0] == "'" # We find a close quote. If we don't, error!
             type = :SSTRING
+            value = obtainStringValue( "'", nextToken )
             nextToken = @scanner.scan(/.*'/)
             value = nextToken[0...-1] # We don't wanna keep that last quotation mark
           elsif nextToken.strip.match(/^[a-zA-Z]\w*$/) # Match any identifier starting with a letter
