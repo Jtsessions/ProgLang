@@ -2,7 +2,7 @@ require_relative '../src/lexer'
 require_relative '../src/grammar'
 require 'test/unit'
 
-class LanguageUnitTest < Test::Unit::TestCase
+class TestLexer < Test::Unit::TestCase
   
   def testLexer # Test the lexer's ability to properly identify symbols.
     

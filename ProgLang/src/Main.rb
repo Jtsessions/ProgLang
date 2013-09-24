@@ -1,5 +1,5 @@
-require_relative 'lexer'
-require_relative 'grammar'
+require_relative 'Lexer'
+require_relative 'Grammar'
 
 class Main # Controls each of the individual language components
   
