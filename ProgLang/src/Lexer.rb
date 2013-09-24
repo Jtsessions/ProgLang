@@ -1,5 +1,5 @@
 require 'strscan'
-require_relative 'lexeme'
+require_relative 'Lexeme'
 
 class Lexer # Class that creates lexemes for each symbol encountered
 
