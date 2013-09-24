@@ -3,10 +3,9 @@ class Lexeme # Class that represents a lexed token
   attr_reader :type
   attr_reader :value
   
-  def initialize(type, value)
+  def initialize( type, value )
     @type = type
-    @value = value
-    p self.to_s
+    @value = value  
   end
   
   def to_s

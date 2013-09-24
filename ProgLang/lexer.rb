@@ -1,9 +1,10 @@
 require 'strscan'
+require './lexeme'
 
 class Lexer # Class that creates lexemes for each symbol encountered
   
-  def initialize( filePath )
-    @text = " ] [ house ] define 1define define1 cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" - 'Cake' + '    cake' + \"    cake\" + \"cake   \" + 'cake   ' }" # This is a placeholder. Grab the file instead!
+  def initialize( filePath = " ] [ house ] define 1define define1 cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" - 'Cake' + '    cake' + \"    cake\" + \"cake   \" + 'cake   ' }" ) # This is a placeholder. Grab the file instead!
+    @text = filePath
     @scanner = StringScanner.new( @text )
   end  
   
@@ -15,19 +16,42 @@ class Lexer # Class that creates lexemes for each symbol encountered
 #   inputs:
 #     None.  
 #   outputs:
-#     results - an array of lexeme objects taken from the parsing of a file and assignment to a type
+#     Lex returns a lexeme object each time lex is called.
 ###################################################################################################################################
   def lex
-    
-    results = [] # Create an array to store the resulting chain of lexemes for return
-    
+        
     nextToken = @scanner.scan(/\s*\S+/) # Match optional whitespace, then a word or parenthesis/bracket
+    type, value = determineTypeAndValue( nextToken )
+    return Lexeme.new( type, value )
+ 
+  end
+  
+  private
+  
+###################################################################################################################################
+# def obtainStringValue( mode, token )
+#   purpose: 
+#     handles the cases where strings contain leading spaces as well as when they don't for both single and double quoted strings.
+#     Returns the value of the string so that we can create a lexeme.
+#   inputs:
+#     quotationType - the type of string whose value we're looking to find. Can be " or '.
+#     token - the leading character of the string. We can use this to determine if the string has leading spaces.
+#   outputs:
+#     value - the value of the string begun by token. This will become the value of the string lexeme eventually.
+###################################################################################################################################
+  def obtainStringValue( quotationType, token )
+    if (token.length > 1) and (token[-1] == quotationType) # If the string is a "simple string" with no leading/trailing whitespace
+      return token[1...-1]    
+    else # The string has leading/trailing whitespace and additional scanning must be done
+      nextToken = token + @scanner.scan(/.*?#{quotationType}/) # Here's the bug - If the first token that we get is something like "cake, then we end up throwing out anything stuck to the quotes.
+      return nextToken[1...-1]
+    end
+  end
 
-    type = nil # Initialize type and value fields so that we can factor out the lexeme constructor statement
-    value = nil
+  def determineTypeAndValue( nextToken )
     
     if nextToken == nil
-      return Lexeme.new( :ENDOFFILE, nil )
+      return :ENDOFFILE, nil
     end
   
     case nextToken.strip.downcase
@@ -84,35 +108,13 @@ class Lexer # Class that creates lexemes for each symbol encountered
           
         else
           type = :INVALIDTOKEN
-          value = "!!!INVALID: |#{nextToken}|!!!"
+          value = nextToken.strip
           
         end
     end
     
-    return Lexeme.new( type, value )
- 
-  end
-  
-  private
-  
-###################################################################################################################################
-# def obtainStringValue( mode, token )
-#   purpose: 
-#     handles the cases where strings contain leading spaces as well as when they don't for both single and double quoted strings.
-#     Returns the value of the string so that we can create a lexeme.
-#   inputs:
-#     quotationType - the type of string whose value we're looking to find. Can be " or '.
-#     token - the leading character of the string. We can use this to determine if the string has leading spaces.
-#   outputs:
-#     value - the value of the string begun by token. This will become the value of the string lexeme eventually.
-###################################################################################################################################
-  def obtainStringValue( quotationType, token )
-    if (token.length > 1) and (token[-1] == quotationType) # If the string is a "simple string" with no leading/trailing whitespace
-      return token[1...-1]    
-    else # The string has leading/trailing whitespace and additional scanning must be done
-      nextToken = token + @scanner.scan(/.*?#{quotationType}/) # Here's the bug - If the first token that we get is something like "cake, then we end up throwing out anything stuck to the quotes.
-      return nextToken[1...-1]
-    end
+    return type, value
+    
   end
   
 end

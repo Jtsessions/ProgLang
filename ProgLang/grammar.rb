@@ -7,14 +7,14 @@
 class Grammar
   
   def initialize( lexer )
-    @lexer = lexer
+    @lexer = Lexer.new()
     @currentLexeme = @lexer.lex
     parse
   end
   
   
   def parse
-    
+
   end
   
 end
