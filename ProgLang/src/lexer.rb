@@ -1,12 +1,12 @@
 require 'strscan'
-require './lexeme'
+require_relative 'lexeme'
 
 class Lexer # Class that creates lexemes for each symbol encountered
-  
-  def initialize( filePath = " ] [ house ] define 1define define1 cakemix _dog 849894usi jahd@      define cherry ( chicken sandwich ) { 5chicken + chicken / 4255ff - 42 + \"Cake\" - 'Cake' + '    cake' + \"    cake\" + \"cake   \" + 'cake   ' }" ) # This is a placeholder. Grab the file instead!
-    @text = filePath
-    @scanner = StringScanner.new( @text )
-  end  
+
+  def self.setText( text )
+    @@text = text
+    @@scanner = StringScanner.new( @@text )
+  end
   
 ###################################################################################################################################
 # def lex
@@ -18,10 +18,10 @@ class Lexer # Class that creates lexemes for each symbol encountered
 #   outputs:
 #     Lex returns a lexeme object each time lex is called.
 ###################################################################################################################################
-  def lex
-        
-    nextToken = @scanner.scan(/\s*\S+/) # Match optional whitespace, then a word or parenthesis/bracket
-    type, value = determineTypeAndValue( nextToken )
+  def self.lex
+    
+    nextToken = @@scanner.scan(/\s*\S+/) # Match optional whitespace, then a word or parenthesis/bracket
+    type, value = Lexer.determineTypeAndValue( nextToken )
     return Lexeme.new( type, value )
  
   end
@@ -39,16 +39,16 @@ class Lexer # Class that creates lexemes for each symbol encountered
 #   outputs:
 #     value - the value of the string begun by token. This will become the value of the string lexeme eventually.
 ###################################################################################################################################
-  def obtainStringValue( quotationType, token )
+  def self.obtainStringValue( quotationType, token )
     if (token.length > 1) and (token[-1] == quotationType) # If the string is a "simple string" with no leading/trailing whitespace
       return token[1...-1]    
     else # The string has leading/trailing whitespace and additional scanning must be done
-      nextToken = token + @scanner.scan(/.*?#{quotationType}/) # Here's the bug - If the first token that we get is something like "cake, then we end up throwing out anything stuck to the quotes.
+      nextToken = token + @@scanner.scan(/.*?#{quotationType}/) # Here's the bug - If the first token that we get is something like "cake, then we end up throwing out anything stuck to the quotes.
       return nextToken[1...-1]
     end
   end
 
-  def determineTypeAndValue( nextToken )
+  def self.determineTypeAndValue( nextToken )
     
     if nextToken == nil
       return :ENDOFFILE, nil
@@ -96,11 +96,11 @@ class Lexer # Class that creates lexemes for each symbol encountered
           
         elsif nextToken.strip[0] == '"' # Instead, when you find an open quote, take the next token until
           type = :DSTRING
-          value = obtainStringValue( '"', nextToken.strip )
+          value = Lexer.obtainStringValue( '"', nextToken.strip )
           
         elsif nextToken.strip[0] == "'" # We find a close quote. If we don't, error!
           type = :SSTRING
-          value = obtainStringValue( "'", nextToken.strip )
+          value = Lexer.obtainStringValue( "'", nextToken.strip )
           
         elsif nextToken.strip.match(/^[a-zA-Z]\w*$/) # Match any identifier starting with a letter
           type = :IDENTIFIER

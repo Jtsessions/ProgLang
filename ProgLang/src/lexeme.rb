@@ -6,6 +6,11 @@ class Lexeme # Class that represents a lexed token
   def initialize( type, value )
     @type = type
     @value = value  
+    
+    if $debugMode
+      p self  
+    end
+    
   end
   
   def to_s
